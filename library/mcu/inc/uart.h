@@ -92,7 +92,7 @@ typedef struct {
 #define UART8						((USART_TypeDef*) UART8_BASE )
 
 Status_TypeDef USART_Init(UART_HandleTypeDef* huart);
-void USART1_MspInit(UART_HandleTypeDef* huart);
+void USART_MspInit(UART_HandleTypeDef* huart);
 uint16_t USART_Compute_Baud(uint32_t pclk, uint32_t baudrate);
 void debug(int ch);
 

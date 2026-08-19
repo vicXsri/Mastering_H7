@@ -8,7 +8,7 @@
 
 #include "msp.h"
 
-void USART1_MspInit(UART_HandleTypeDef* huart){
+void USART_MspInit(UART_HandleTypeDef* huart){
 	  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
 	  if(huart->Instance == USART1){
@@ -41,6 +41,46 @@ void USART1_MspInit(UART_HandleTypeDef* huart){
 	  }
 
 }
+
+void I2C_MspInit(I2C_HandleTypeDef* hi2c){
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	RCC_PeripgCLKInitTypeDef I2CClkInit = {0};
+
+	if(hi2c->Instance == I2C1){
+
+		I2CClkInit.PeripheralClockSel = RCC_PERIPHCLK_I2C123;
+		I2CClkInit.I2c123ClockSelection = RCC_I2C123CLKSOURCE_D2PCLK1;
+
+
+		if(RCCEx_PeripheralCLKConfig(&I2CClkInit)!= ARM_OK){
+
+		}
+
+		__RCC_GPIOB_CLK_ENABLE();
+
+		/* PB8 */
+		GPIO_InitStruct.Pin = GPIO_PIN_8;
+		GPIO_InitStruct.Mode = GPIO_ALTERNATE;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+		GPIO_InitStruct.OType = GPIO_MODE_OUTPUT_OD;
+		GPIO_InitStruct.Alternate = GPIO_AF4;
+		GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+		/* PB9 */
+		GPIO_InitStruct.Pin = GPIO_PIN_9;
+		GPIO_InitStruct.Mode = GPIO_ALTERNATE;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+		GPIO_InitStruct.OType = GPIO_MODE_OUTPUT_OD;
+		GPIO_InitStruct.Alternate = GPIO_AF4;
+		GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+		__RCC_I2C1_CLK_ENABLE();
+	}
+
+}
+
 
 void LTDC_MSPInit(LTDC_HandleTypeDef* hltdc){
 

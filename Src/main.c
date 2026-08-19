@@ -1,5 +1,5 @@
 /*
- * main.h
+ * main.c
  *
  *  Created on: Aug 15, 2026
  *      Author: Srivisweswara Mohan Santhi
@@ -7,28 +7,26 @@
 
 #include "main.h"
 
+#define fb_size	480 * 272 * 3
+
 void SystemSetup(void);
 void SystemClock_Config(void);
 void M_GPIO_Init(void);
 void M_USART1_Init(void);
 void M_LTDC_Init(void);
-
+void M_I2C1_Init(void);
 
 void Error_Handler(void);
 
 UART_HandleTypeDef huart1;
+I2C_HandleTypeDef  hi2c1;
 LTDC_HandleTypeDef hltdc;
 
-static uint8_t layer0_fb[240 * 136 * 3];
+uint8_t layer0_fb[fb_size] = {0};
+//static uint8_t layer1_fb[fb_size] = {0}
 
-uint32_t apb2clk = 0;
-float ltdcclkss = 0.00;
+float voltagess = 0.00;
 
-volatile uint32_t ltdc_bccr_addr = 0;
-uint32_t LTDC_GetBCCR_Address(void)
-{
-    return (uint32_t)&(LTDC->BCCR);
-}
 int main(void)
 {
 
@@ -41,23 +39,23 @@ int main(void)
 	M_GPIO_Init();
 
 	M_USART1_Init();
-	for (uint32_t i = 0; i < sizeof(layer0_fb); i += 3) {
-	    layer0_fb[i + 0] = 0xFF; // B
-	    layer0_fb[i + 1] = 0x00; // G
-	    layer0_fb[i + 2] = 0x00; // R
-	}
+
+	M_I2C1_Init();
+
+//	VIBGYOR_fb();
+
 	M_LTDC_Init();
 
-	ltdc_bccr_addr = LTDC_GetBCCR_Address();
+	voltagess = MAX17048_Get_Voltage();
 
-	ltdcclkss = __RCC_GetLTDC_CLKFreq();
+	lvgl_start(); // Be careful runs in a while loop!!!!!!
 
-	while(1){
-		printf("Hello from Retro Console :) !!");
-		GPIO_TogglePin(GPIOH, GPIO_PIN_7);
-		delay(1000);
+	while(1);
+//		printf("Hello from Retro Console :) !!\r\n");
+//		GPIO_TogglePin(GPIOH, GPIO_PIN_7);
+//		delay(1000);
 
-	}
+
 }
 
 void SystemSetup(void){
@@ -149,19 +147,34 @@ void M_USART1_Init(void){
 	}
 }
 
+void M_I2C1_Init(void){
+
+	hi2c1.Instance = I2C1;
+	hi2c1.Init.Timing = 0x307075B1;
+	hi2c1.Init.OwnAddr1 = 0;
+	hi2c1.Init.AddressingMode = I2C_ADDMODE_7BIT;
+	hi2c1.Init.DualAddressingMode = I2C_DUALADDRESS_DISABLE;
+	hi2c1.Init.OwnAddr2 = 0;
+	hi2c1.Init.OwnAddr2Mask = I2C_OA2_NOMASK;
+	hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+	hi2c1.Init.NoStrechMode = I2C_NOSTRECH_DISABLE;
+
+	if(I2C_Init(&hi2c1) != ARM_OK){
+		Error_Handler();
+	}
+
+}
+
 void M_LTDC_Init(void){
 
 	LTDC_LayerCfgTypeDef pLayer0cfg = {0};
 
 	hltdc.Instance = LTDC;
 
-	/* Need MACROS */
 	hltdc.Init.HSPolarity = LTDC_HSPOLARITY_AL;
 	hltdc.Init.VSPolarity = LTDC_VSPOLARITY_AL;
 	hltdc.Init.DEPolarity = LTDC_DEPOLARITY_AL;
 	hltdc.Init.PCPolarity = LTDC_PCPOLARITY_IP;
-	/* Need MACROS */
-
 	hltdc.Init.HorizontalSync = 40;
 	hltdc.Init.VerticalSync = 9;
 	hltdc.Init.AccumulatedHBP = 42;
@@ -178,21 +191,20 @@ void M_LTDC_Init(void){
 		Error_Handler();
 	}
 
-
-	pLayer0cfg.HorizontalStart = 240;
+	pLayer0cfg.HorizontalStart = 0;
 	pLayer0cfg.HorizontalStop = 480;
-	pLayer0cfg.VerticalStart = 136;
+	pLayer0cfg.VerticalStart = 0;
 	pLayer0cfg.VerticalStop = 272;
 	pLayer0cfg.PixelFormat = LTDC_PIXELFORMAT_RGB888;
 	pLayer0cfg.Alpha = 255;
-	pLayer0cfg.Alpha0 = 100;
+	pLayer0cfg.Alpha0 = 0;
 	pLayer0cfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_CA;
 	pLayer0cfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_CA;
 	pLayer0cfg.FrameBuffStAdd = (uint32_t)layer0_fb;
-	pLayer0cfg.ImageWidth = 240;
-	pLayer0cfg.ImageHeight = 136;
+	pLayer0cfg.ImageWidth = 480;
+	pLayer0cfg.ImageHeight = 272;
 	pLayer0cfg.BackColor.Red = 0;
-	pLayer0cfg.BackColor.Green = 0xff;
+	pLayer0cfg.BackColor.Green = 0;
 	pLayer0cfg.BackColor.Blue = 0;
 
 	if(LTDC_ConfigLayer(&hltdc, &pLayer0cfg, 0) != ARM_OK){

@@ -225,6 +225,10 @@ Status_TypeDef RCCEx_PeripheralCLKConfig(RCC_PeripgCLKInitTypeDef *PeriphClkInit
 		}
 
 	}
+	if(PeriphClkInit->PeripheralClockSel == RCC_PERIPHCLK_I2C123){
+		RCC->D2CCIP2R &=  ~(0x03UL << 12);
+		return ARM_OK;
+	}
 
 	if(status == ARM_OK){
 		return ARM_OK;
@@ -459,6 +463,18 @@ void __RCC_USART1_CLK_ENABLE(void){
 }
 void __RCC_LTDC_CLK_ENABLE(void){
 	RCC->APB3ENR |= LTDC_EN;
+}
+void __RCC_I2C1_CLK_ENABLE(void){
+	RCC->APB1LENR |= I2C1_EN;
+}
+void __RCC_I2C2_CLK_ENABLE(void){
+	RCC->APB1LENR |= I2C2_EN;
+}
+void __RCC_I2C3_CLK_ENABLE(void){
+	RCC->APB1LENR |= I2C3_EN;
+}
+void __RCC_I2C4_CLK_ENABLE(void){
+	RCC->APB4ENR |= I2C4_EN;
 }
 
 

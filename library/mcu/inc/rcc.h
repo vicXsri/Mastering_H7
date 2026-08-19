@@ -217,6 +217,7 @@ typedef struct{
 
 	RCC_PLL3InitTypeDef PLL3;
 
+	uint32_t I2c123ClockSelection;
 
 }RCC_PeripgCLKInitTypeDef;
 
@@ -233,9 +234,13 @@ typedef struct{
 #define GPIOHEN				(1U << 7)
 #define GPIOIEN				(1U << 8)
 
-#define SYSCFG_EN  			(1U << 1U)
-#define USART1_EN  			(1U << 4U)
-#define LTDC_EN  			(1U << 3U)
+#define SYSCFG_EN  			(1UL << 1U)
+#define USART1_EN  			(1UL << 4U)
+#define LTDC_EN  			(1UL << 3U)
+#define I2C1_EN  			(1UL << 21U)
+#define I2C2_EN  			(1UL << 22U)
+#define I2C3_EN  			(1UL << 23U)
+#define I2C4_EN  			(1UL << 7U)
 
 #define RCC_CR_HSION			(1U << 0U)
 #define RCC_CR_HSIRDY			(1U << 2U)
@@ -414,9 +419,10 @@ typedef struct{
 
 #define RCC_PLL3_ON					(0x01UL << 28U)
 
-
+#define RCC_I2C123CLKSOURCE_D2PCLK1	0x0000UL
 
 #define RCC_PERIPHCLK_LTDC			(0x00002000UL)
+#define RCC_PERIPHCLK_I2C123			(0x00000008UL)
 
 void RCC_Enable(uint32_t pheripheral, uint8_t bus);
 void RCC_Disable(uint32_t pheripheral, uint8_t bus);
@@ -450,6 +456,10 @@ void __RCC_GPIOI_CLK_ENABLE(void);
 void __RCC_SYSCFG_CLK_ENABLE(void);
 void __RCC_USART1_CLK_ENABLE(void);
 void __RCC_LTDC_CLK_ENABLE(void);
+void __RCC_I2C1_CLK_ENABLE(void);
+void __RCC_I2C2_CLK_ENABLE(void);
+void __RCC_I2C3_CLK_ENABLE(void);
+void __RCC_I2C4_CLK_ENABLE(void);
 
 uint32_t __RCC_GET_PLL_OSCSOURCE(void);
 void __RCC_PLL3_DISABLE(void);

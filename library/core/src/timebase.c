@@ -49,4 +49,6 @@ void TimeBase_Init(uint32_t clk){
 
 void SysTick_Handler(void){
 	Tick_Increament();
+    lv_tick_inc(1);
+
 }

@@ -19,7 +19,7 @@ Status_TypeDef USART_Init(UART_HandleTypeDef* huart){
 
 	if(huart == NULL) return ARM_ERROR;
 
-	USART1_MspInit(huart);
+	USART_MspInit(huart);
 
 	huart->Instance->CR1 = 0;
 	huart->Instance->CR2 = 0;

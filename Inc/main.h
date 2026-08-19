@@ -48,12 +48,18 @@ typedef enum{
 #include "pwr.h"
 #include "gpio.h"
 #include "uart.h"
+#include "i2c.h"
 #include "ltdc.h"
 
 #include "pins.h"
 
 #include "msp.h"
 #include "it.h"
+
+#include "max17048.h"
+
+#include "lvgl.h"
+#include "test_gui.h"
 
 
 

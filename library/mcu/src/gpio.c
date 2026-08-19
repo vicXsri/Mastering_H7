@@ -14,11 +14,11 @@ void GPIO_Init(GPIO_Typedef* GPIOx, GPIO_InitTypeDef* GPIO_Init){
 	CLEAR_FIELD(GPIOx->MODER, 0x03U, (GPIO_Init->Pin * 0x02));
 	SET_FIELD(GPIOx->MODER, GPIO_Init->Mode, (GPIO_Init->Pin * 0x02));
 
-	/* In case of alternate or output mode*/
-	if((GPIO_Init->Mode == GPIO_OUTPUT) || (GPIO_Init->Mode == GPIO_ANALOG)){
+	/* In case of output or alternate mode*/
+	if((GPIO_Init->Mode == GPIO_OUTPUT) || (GPIO_Init->Mode == GPIO_ALTERNATE)){
 		/*Set the speed of the gpio pin*/
 		CLEAR_FIELD(GPIOx->OSPEEDR, 0x03U, (GPIO_Init->Pin * 0x02));
-		SET_FIELD(GPIOx->OSPEEDR, GPIO_Init->Mode, (GPIO_Init->Pin * 0x02));
+		SET_FIELD(GPIOx->OSPEEDR, GPIO_Init->Speed, (GPIO_Init->Pin * 0x02));
 
 		/*configure the output mode of gpio pin*/
 		(GPIO_Init->OType)?
@@ -39,7 +39,7 @@ void GPIO_Init(GPIO_Typedef* GPIOx, GPIO_InitTypeDef* GPIO_Init){
 			SET_FIELD(GPIOx->AFR[0], GPIO_Init->Alternate, (GPIO_Init->Pin * 0x04));
 		}
 		else{
-			CLEAR_FIELD(GPIOx->AFR[1], 0x0FU, (GPIO_Init->Pin * 0x04));
+			CLEAR_FIELD(GPIOx->AFR[1], 0x0FU, ((GPIO_Init->Pin - 0x08) * 0x04));
 			SET_FIELD(GPIOx->AFR[1], GPIO_Init->Alternate, ((GPIO_Init->Pin - 0x08)* 0x04));
 		}
 	}

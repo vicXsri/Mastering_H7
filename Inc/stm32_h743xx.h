@@ -55,5 +55,9 @@
 #define LTDC_BASE			   	(APB3_BASE + 0x1000UL)
 #define WWDG1_BASE			   	(APB3_BASE + 0x3000UL)
 
+#define I2C1_BASE			   	(APB1_BASE + 0x5400UL)
+#define I2C2_BASE			   	(APB1_BASE + 0x5800UL)
+#define I2C3_BASE			   	(APB1_BASE + 0x5C00UL)
+#define I2C4_BASE			   	(APB4_BASE + 0x1C00UL)
 
 #endif /* STM32_H743XX_H_ */
