@@ -1,0 +1,6 @@
+# STM32CubeIDE / Eclipse
+Debug/
+.settings/
+*.launch
+.cproject
+.project
